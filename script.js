@@ -1,79 +1,97 @@
-const container = document.getElementById("cats-container");
-cats.forEach(cat => {
-    const card = document.createElement("div"); // создаём карточку
-    card.className = "cat-card";
-    const img = document.createElement("img"); // картинка
-    img.src = cat.img_link;
-    img.alt = cat.name;
-    const name = document.createElement("h3"); // имя
-    name.textContent = cat.name;
-    const desc = document.createElement("p"); // описание
-    desc.textContent = cat.description;
-    const age = document.createElement("p"); // возраст
-    age.textContent = `Возраст: ${cat.age}`;
-    const rate = document.createElement("p"); // рейтинг, если есть
-    rate.textContent = `Рейтинг: ${cat.rate}`;
-    card.append(img, name, desc, age, rate); // собираем
+var container = document.getElementById("cats");
+
+Object.assign(document.body.style, {
+    fontFamily: "Arial, sans-serif",
+    background: "#f5f0e8",
+    padding: "24px",
+    margin: "0"
+});
+
+Object.assign(container.style, {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "20px"
+});
+
+console.log("Данные котов:", cats);
+
+cats.forEach(function(cat) {
+    console.log("Кот:", cat);
+
+    var card = document.createElement("div");
+    Object.assign(card.style, {
+        width: "220px",
+        background: "#ffffff",
+        border: "1px solid #d4b896",
+        borderRadius: "12px",
+        overflow: "hidden",
+        padding: "0"
+    });
+
+    // Перебираем все ключи объекта и ищем картинку
+    var imgSrc = null;
+    Object.keys(cat).forEach(function(key) {
+        var val = cat[key];
+        if (typeof val === "string" && val.match(/\.(jpg|jpeg|png|gif|webp)/i)) {
+            imgSrc = val;
+        }
+    });
+
+    if (imgSrc) {
+        // Пробуем все варианты пути
+        var fullSrc = imgSrc.startsWith("http")
+            ? imgSrc
+            : "https://cats.petiteweb.dev/simple/" + imgSrc.replace(/^\//, "");
+
+        console.log("IMG src:", fullSrc);
+
+        var img = document.createElement("img");
+        Object.assign(img.style, {
+            width: "100%",
+            height: "180px",
+            objectFit: "cover",
+            display: "block"
+        });
+        img.src = fullSrc;
+        img.alt = cat.name || "";
+        card.appendChild(img);
+    }
+
+    var info = document.createElement("div");
+    Object.assign(info.style, {
+        padding: "12px"
+    });
+
+    var h3 = document.createElement("h3");
+    Object.assign(h3.style, {
+        margin: "5px 0",
+        fontSize: "18px",
+        color: "#5a3e28"
+    });
+    h3.textContent = cat.name || "Без имени";
+    info.appendChild(h3);
+
+    Object.keys(cat).forEach(function(key) {
+        if (key === "name") return;
+        var val = cat[key];
+
+        if (typeof val === "string" && val.match(/\.(jpg|jpeg|png|gif|webp)/i)) return;
+
+        if (val !== null && typeof val === "object") {
+            Object.keys(val).forEach(function(subKey) {
+                var p = document.createElement("p");
+                Object.assign(p.style, { margin: "3px 0", fontSize: "13px", color: "#444" });
+                p.innerHTML = "<b>" + subKey + ":</b> " + val[subKey];
+                info.appendChild(p);
+            });
+        } else {
+            var p = document.createElement("p");
+            Object.assign(p.style, { margin: "3px 0", fontSize: "13px", color: "#444" });
+            p.innerHTML = "<b>" + key + ":</b> " + val;
+            info.appendChild(p);
+        }
+    });
+
+    card.appendChild(info);
     container.appendChild(card);
 });
-function applyStyles() {
-    // #cats-container
-    const container = document.getElementById('cats-container');
-    if (container) {
-        Object.assign(container.style, {
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '16px',
-            padding: '20px',
-        });
-    }
-    // .cat-card
-    const cards = document.querySelectorAll('.cat-card');
-    cards.forEach((card) => {
-        Object.assign(card.style, {
-            width: '200px',
-            padding: '12px',
-            borderRadius: '10px',
-            background: 'antiquewhite',
-            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)',
-            textAlign: 'center',
-            transition: 'transform 0.2s',
-        });
-        // .cat-card:hover
-        card.addEventListener('mouseenter', () => {
-            card.style.transform = 'translateY(-5px)';
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = '';
-        });
-        // .cat-card img
-        const imgs = card.querySelectorAll('img');
-        imgs.forEach((img) => {
-            Object.assign(img.style, {
-                width: '100%',
-                height: '160px',
-                objectFit: 'cover',
-                borderRadius: '8px',
-                marginBottom: '10px',
-            });
-        });
-        // .cat-card h3
-        const h3s = card.querySelectorAll('h3');
-        h3s.forEach((h3) => {
-            Object.assign(h3.style, {
-                margin: '5px 0',
-                fontSize: '18px',
-            });
-        });
-        // .cat-card p
-        const ps = card.querySelectorAll('p');
-        ps.forEach((p) => {
-            Object.assign(p.style, {
-                margin: '4px 0',
-                fontSize: '14px',
-                color: '#555',
-            });
-        });
-    });
-}
-applyStyles();
